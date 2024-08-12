@@ -124,9 +124,12 @@ public:
     std::string LHS = GetReplacementLHSString(Cand.BPCs, Cand.PCs,
                                               Cand.Mapping.LHS, Context);
     LLVMContext &C = F->getContext();
+    auto Int8Ty = llvm::Type::getInt8Ty(C);
+    auto Int64Ty = llvm::Type::getInt64Ty(C);
     Module *M = F->getParent();
     Function *RegisterFunc = M->getFunction("_souper_profile_register");
     if (!RegisterFunc) {
+      
       Type *RegisterArgs[] = {
         PointerType::get(Type::getInt8Ty(C), 0),
         PointerType::get(Type::getInt8Ty(C), 0),
@@ -143,7 +146,7 @@ public:
     Constant *ReplVar = new GlobalVariable(*M, Repl->getType(), true,
         GlobalValue::PrivateLinkage, Repl, "");
     Constant *ReplPtr = ConstantExpr::getPointerCast(ReplVar,
-        PointerType::get(Type::getInt8Ty(C), 0));
+        PointerType::getUnqual(Int8Ty));
 
     Constant *Field = ConstantDataArray::getString(C, "dprofile " + Loc.str(),
                                                    true);
@@ -151,7 +154,7 @@ public:
                                             GlobalValue::PrivateLinkage, Field,
                                             "");
     Constant *FieldPtr = ConstantExpr::getPointerCast(FieldVar,
-        PointerType::get(Type::getInt8Ty(C), 0));
+        PointerType::getUnqual(Int8Ty));
 
     Constant *CntVar = new GlobalVariable(*M, Type::getInt64Ty(C), false,
                                           GlobalValue::PrivateLinkage,

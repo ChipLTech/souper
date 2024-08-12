@@ -11,9 +11,9 @@ endif()
 if (NOT LLVM_BUILD_TYPE)
   set(LLVM_BUILD_TYPE ${CMAKE_BUILD_TYPE})
 endif()
-set(LLVM_CONFIG_EXECUTABLE ${CMAKE_SOURCE_DIR}/third_party/llvm-${LLVM_BUILD_TYPE}-install/bin/llvm-config)
+set(LLVM_CONFIG_EXECUTABLE $ENV{LLVM_PATH}/build/bin/llvm-config)
 if(NOT EXISTS ${LLVM_CONFIG_EXECUTABLE})
-  message(FATAL_ERROR "llvm-config could not be found!")
+  message(FATAL_ERROR "llvm-config could not be found at ${LLVM_CONFIG_EXECUTABLE}!")
 endif()
 
 find_path(ZSTD_LIBRARY_DIR
@@ -70,12 +70,13 @@ execute_process(
 )
 
 set(ALIVE_SRCDIR "${CMAKE_SOURCE_DIR}/third_party/alive2")
-set(ALIVE_BUILDDIR "${CMAKE_SOURCE_DIR}/third_party/alive2-build")
+set(ALIVE_BUILDDIR "${CMAKE_SOURCE_DIR}/third_party/alive2/build")
 include_directories("${CMAKE_SOURCE_DIR}/third_party")
 include_directories("${ALIVE_SRCDIR}")
 
 set(GTEST_CXXFLAGS "-DGTEST_HAS_RTTI=0")
-set(GTEST_INCLUDEDIR "${LLVM_BINDIR}/../include/llvm-gtest/")
+set(GTEST_INCLUDEDIR "$ENV{LLVM_PATH}/third-party/unittest/googletest/include/")
+message(WARNING "GTEST_INCLUDEDIR: ${GTEST_INCLUDEDIR}")
 set(GTEST_LIBS "-lllvm_gtest_main -lllvm_gtest")
 
 set(LLVM_CXXFLAGS "${LLVM_CXXFLAGS} -std=c++20")
@@ -156,7 +157,7 @@ set(Z3 "${CMAKE_SOURCE_DIR}/third_party/z3-install/bin/z3")
 set(Z3_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/third_party/z3-install/include")
 include_directories(${Z3_INCLUDE_DIR})
 
-find_library(Z3_LIBRARY z3 PATHS "${CMAKE_SOURCE_DIR}/third_party/z3-install/lib" NO_DEFAULT_PATH)
+find_library(Z3_LIBRARY z3 PATHS "${CMAKE_SOURCE_DIR}/third_party/z3/build/" NO_DEFAULT_PATH)
 if (Z3_LIBRARY)
   message(STATUS "Z3 shared lib: ${Z3_LIBRARY}")
 else()
