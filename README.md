@@ -104,3 +104,5 @@ any time Souper is upgraded.
 
 Please note that although some of the authors are employed by Google, this
 is not an official Google product.
+
+LLVM team claims the owenership on Aug.17th
